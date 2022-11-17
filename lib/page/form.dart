@@ -1,4 +1,4 @@
-import 'main.dart';
+import 'package:gabing_app/main.dart';
 import 'package:flutter/material.dart';
 
 class MyFormPage extends StatefulWidget {

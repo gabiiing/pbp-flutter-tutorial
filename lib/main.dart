@@ -1,4 +1,4 @@
-import 'package:gabing_app/form.dart';
+import 'package:gabing_app/page/form.dart';
 import 'package:flutter/material.dart';
 
 void main() {
