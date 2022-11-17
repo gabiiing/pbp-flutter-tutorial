@@ -1,16 +1,43 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:gabing_app/model/to_do.dart';
-
+import 'package:gabing_app/page/form.dart';
+import 'package:gabing_app/main.dart';
+import 'package:flutter/material.dart';
 
 class ToDoPage extends StatefulWidget {
-  const ToDoPage({super.key});
+  const ToDoPage({Key? key}) : super(key: key);
 
   @override
   State<ToDoPage> createState() => _ToDoPageState();
 }
 
 class _ToDoPageState extends State<ToDoPage> {
+  Future<List<ToDo>> fetchToDo() async {
+    var url = Uri.parse(
+        'https://jsonplaceholder.typicode.com/todos?_start=0&_limit=10');
+    var response = await http.get(
+      url,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+    );
+
+    // melakukan decode response menjadi bentuk json
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+    // melakukan konversi data json menjadi object ToDo
+    List<ToDo> listToDo = [];
+    for (var d in data) {
+      if (d != null) {
+        listToDo.add(ToDo.fromJson(d));
+      }
+    }
+
+    return listToDo;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +54,7 @@ class _ToDoPageState extends State<ToDoPage> {
                   // Route menu ke halaman utama
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()),
+                    MaterialPageRoute(builder: (context) => const MyApp()),
                   );
                 },
               ),
@@ -55,7 +82,7 @@ class _ToDoPageState extends State<ToDoPage> {
           ),
         ),
         body: FutureBuilder(
-            future: RemoteApi.fetchToDo(),
+            future: fetchToDo(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return const Center(child: CircularProgressIndicator());
@@ -103,6 +130,8 @@ class _ToDoPageState extends State<ToDoPage> {
                           ));
                 }
               }
-            }));
+            }
+          )
+        );
   }
 }
